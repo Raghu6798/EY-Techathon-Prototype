@@ -9,16 +9,14 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains import load_summarize_chain
 from langchain.schema import Document
 
-# Load environment variables
 load_dotenv()
 
-# Initialize necessary components
 llm = ChatGroq(model="llama3-groq-70b-8192-tool-use-preview", api_key=os.getenv("GROQ_API"))
 duckduckgo_search = DuckDuckGoSearchRun()
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
 summarize_chain = load_summarize_chain(llm, chain_type="map_reduce")
 
-# Survey questions and options
+
 questions = {
     "സാമ്പത്തിക സാക്ഷരതാ നില": [
         "ഫിനാൻസിൽ പുതിയത്: ഞാൻ ധനകാര്യത്തിൻ്റെ അടിസ്ഥാനകാര്യങ്ങളിൽ പ്രാവീണ്യം നേടുന്നു.",
@@ -55,7 +53,7 @@ questions = {
     ]
 }
 
-# Display survey in Streamlit
+
 def display_survey():
     st.title("സാമ്പത്തിക സാക്ഷരതാ സർവേ")
     responses = {}
@@ -75,7 +73,6 @@ def display_survey():
         st.markdown("## Search confirmation:")
         st.markdown(search_confirmation)
 
-# Generate personalized content and search confirmation
 def generate_personalized_content(responses):
     prompt_template = ChatPromptTemplate.from_messages([("system", f"""
         Based on the following user responses:
@@ -96,8 +93,8 @@ def generate_personalized_content(responses):
     search_confirmation = []
     for topic in content.splitlines():
         try:
-            # Delay to avoid rate limits
-            time.sleep(2)  # Wait for 2 seconds between searches
+            
+            time.sleep(2)
             search_results = duckduckgo_search.run(topic)
             
             if isinstance(search_results, str) and search_results.strip():
@@ -112,6 +109,5 @@ def generate_personalized_content(responses):
     
     return content, "\n\n".join(search_confirmation)
 
-# Run the Streamlit app
 if __name__ == "__main__":
     display_survey()
