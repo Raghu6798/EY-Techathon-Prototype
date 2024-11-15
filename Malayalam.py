@@ -8,7 +8,7 @@ from langchain_community.tools import DuckDuckGoSearchRun
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains import load_summarize_chain
 from langchain.schema import Document
-
+###
 load_dotenv()
 
 llm = ChatGroq(model="llama3-groq-70b-8192-tool-use-preview", api_key=os.getenv("GROQ_API"))
