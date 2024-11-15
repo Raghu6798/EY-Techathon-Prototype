@@ -20,13 +20,12 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config pull.rebase false  # Use merge strategy by default
 
       - name: Pull latest changes from remote
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          git pull https://huggingface.co/spaces/RaghuCourage9605/EY_Techathon_Prototype_ main
+          git pull --allow-unrelated-histories https://huggingface.co/spaces/RaghuCourage9605/EY_Techathon_Prototype_ main
 
       - name: Push to Hugging Face Hub
         env:
