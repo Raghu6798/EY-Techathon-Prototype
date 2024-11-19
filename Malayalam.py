@@ -10,7 +10,11 @@ from langchain.chains import load_summarize_chain
 from langchain.schema import Document
 load_dotenv()
 ##
-llm = ChatGroq(model="mixtral-8x7b-32768", api_key=os.getenv("GROQ_API"))
+
+groq_api_key = st.secrets["GROQ_API"]
+
+
+llm = ChatGroq(model="mixtral-8x7b-32768", api_key=groq_api_key)
 duckduckgo_search = DuckDuckGoSearchRun()
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
 summarize_chain = load_summarize_chain(llm, chain_type="map_reduce")
