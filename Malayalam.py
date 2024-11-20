@@ -8,17 +8,15 @@ from langchain_community.tools import DuckDuckGoSearchRun
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains import load_summarize_chain
 from langchain.schema import Document
+
 load_dotenv()
-##
 
 groq_api_key = st.secrets["GROQ_API"]
 
-
-llm = ChatGroq(model="mixtral-8x7b-32768", api_key=groq_api_key)
+llm = ChatGroq(model="llama-3.2-3b-preview", api_key=groq_api_key)
 duckduckgo_search = DuckDuckGoSearchRun()
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
 summarize_chain = load_summarize_chain(llm, chain_type="map_reduce")
-
 
 questions = {
     "സാമ്പത്തിക സാക്ഷരതാ നില": [
@@ -56,6 +54,10 @@ questions = {
     ]
 }
 
+
+def preprocess_query(query):
+    """Extract keywords from the response for better search queries."""
+    return " ".join(query.split(":")[1:]).strip()
 
 def display_survey():
     st.title("സാമ്പത്തിക സാക്ഷരതാ സർവേ")
@@ -96,9 +98,14 @@ def generate_personalized_content(responses):
     search_confirmation = []
     for topic in content.splitlines():
         try:
-            
-            time.sleep(2)
-            search_results = duckduckgo_search.run(topic)
+            # Preprocess query for better results
+            processed_topic = preprocess_query(topic)
+            if not processed_topic.strip():
+                search_confirmation.append(f"### {topic}\n\n- No valid search query provided.")
+                continue
+
+            time.sleep(2)  # Rate-limiting delay
+            search_results = duckduckgo_search.run(processed_topic)
             
             if isinstance(search_results, str) and search_results.strip():
                 documents = [Document(page_content=search_results)]
